@@ -1,5 +1,4 @@
 import * as repo from '../repository/studentRepository.js'
-import {findStudentsByName} from "../repository/studentRepository.js";
 
 export const addStudent = async ({id, name, password}) => {
     const existing = await repo.findStudentById(id);
@@ -11,64 +10,49 @@ export const addStudent = async ({id, name, password}) => {
 }
 
 export const findStudent = async (id) => {
-    const existing = await repo.findStudentById(id);
-    if (!existing) {
-        return false;
+    const student = await repo.findStudentById(id);
+    if (student) {
+        student.password = undefined;
     }
-    return existing.toObject();
-
-}
-export const updateStudent = async (id, data) => {
-    const existing = await repo.findStudentById(id);
-    if (!existing) {
-        return false
-    }
-    const updated = await repo.updateStudent(id, data);
-    updated.scores = undefined
-    return updated.toObject();
-
+    return student;
 }
 
 export const deleteStudent = async (id) => {
-    const success = await repo.deleteStudentById(id);
-    if (!success) {
-        return false;
+    const student = await repo.deleteStudentById(id);
+    if (student) {
+        student.password = undefined;
     }
-    return success.toObject();
+    return student;
 }
 
+export const updateStudent = async (id, data) => {
+    const student = await repo.updateStudent(id, data);
+    if (student) {
+        student.scores = undefined;
+    }
+    return student;
+}
 
 export const addScore = async (id, exam, score) => {
-    const success = await repo.updateStudentScore(id, exam, score);
-    if (!success) {
-        return false;
-    }
-    return success.toObject();
+    return await repo.updateStudentScore(id, exam, score);
 }
 
 export const findByName = async (name) => {
-    const success = await repo.findStudentsByName(name)
-    if(!success) {
-        return false;
-    }
-    return success.map(student => {
-        return student.toObject();
+    const students = await repo.findStudentsByName(name);
+    return students.map(student => {
+        student.password = undefined;
+        return student;
     });
 }
 
 export const countByNames = async (names) => {
-    const namesArr = Array.isArray(names) ? names : [names]
-    const success = await repo.countStudentsByNames(namesArr);
-    if(!success){
-        return false
-    }
-    return success.toObject();
+    return await repo.countStudentsByNames(names);
 }
 
 export const findByMinScore = async (exam, minScore) => {
-    const success = await repo.findStudentsByMinScore(exam, minScore);
-    if(!success){
-        return false;
-    }
-    return success.toObject();
+    const students = await repo.findStudentsByMinScore(exam, minScore);
+    return students.map(student => {
+        student.password = undefined;
+        return student;
+    });
 }

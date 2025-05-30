@@ -12,14 +12,6 @@ const studentSchema = new mongoose.Schema({
     }
 }, {
     versionKey: false,
-    toObject: {
-        transform: (doc, ret) => {
-            ret.id = ret._id;
-            delete ret._id;
-            delete ret.password;
-            return ret;
-        }
-    },
     toJSON:{
         transform: (doc, ret) => {
             ret.id = ret._id;
@@ -29,5 +21,5 @@ const studentSchema = new mongoose.Schema({
     }
 })
 
-const Student = mongoose.model("Student", studentSchema, 'college');
+const Student = mongoose.model("Student", studentSchema, 'students');
 export default Student;

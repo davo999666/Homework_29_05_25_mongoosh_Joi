@@ -1,11 +1,5 @@
 import * as service from '../services/studentService.js'
-import {
-    findByNameSchema,
-    findStudentSchema,
-    scoreSchema,
-    studentSchema,
-    updateStudentSchema
-} from "../validator/studentValidator.js";
+import {scoreSchema, studentSchema, updateStudentSchema} from "../validator/studentValidator.js";
 
 export const addStudent = async (req, res) => {
     const {error} = studentSchema.validate(req.body);
@@ -17,12 +11,12 @@ export const addStudent = async (req, res) => {
 }
 
 export const findStudent = async (req, res) => {
-    const {error} = findStudentSchema.validate({ _id: +req.params.id });
-    if(error){
-        return res.status(400).json({error: error.details[0].message});
+    const student = await service.findStudent(+req.params.id);
+    if (student) {
+        res.json(student);
+    } else {
+        res.sendStatus(404);
     }
-    const success = await service.findStudent(+req.params.id);
-    res.json(success ? success : 409);
 }
 
 export const updateStudent = async (req, res) => {
@@ -31,17 +25,20 @@ export const updateStudent = async (req, res) => {
         return res.status(400).json({error: error.details[0].message});
     }
     const student = await service.updateStudent(+req.params.id, req.body);
-    res.json(student ? student : 409);
-
+    if (student) {
+        res.json(student);
+    } else {
+        res.sendStatus(404);
+    }
 }
 
 export const deleteStudent = async (req, res) => {
-    const {error} = findStudentSchema.validate({ _id: +req.params.id});
-    if(error){
-        return res.status(400).json({error: error.details[0].message});
+    const student = await service.deleteStudent(+req.params.id);
+    if (student) {
+        res.json(student);
+    } else {
+        res.sendStatus(404);
     }
-    const success = await service.deleteStudent(+req.params.id);
-    res.json(success ? success : 409);
 }
 
 export const addScore = async (req, res) => {
@@ -54,31 +51,17 @@ export const addScore = async (req, res) => {
 }
 
 export const findByName = async (req, res) => {
-    const {error} = findByNameSchema.validate(req.params.name);
-    if(!error){
-        return false
-    }
-    const success = await service.findByName(req.params.name);
-    res.json(success ? success : 409);
+    const students = await service.findByName(req.params.name);
+    res.json(students);
 }
 
-
-
-
 export const countByNames = async (req, res) => {
-    const {error} = findByNameSchema.validate(req.query.names);
-    if(!error){
-        return false
-    }
-    const success = await service.countByNames(req.query.names);
-    res.json(success ? success : 409)
+    const names = Array.isArray(req.query.names) ? req.query.names : [req.query.names];
+    const count = await service.countByNames(names);
+    res.json(count)
 }
 
 export const findByMinScore = async (req, res) => {
-    const {error} = scoreSchema.validate(req.params.exam, +req.params.minScore)
-    if(!error){
-        return false
-    }
-    const success = await service.findByMinScore(req.params.exam, req.params.minScore);
-    res.json(success ? success : 410)
+    const students = await service.findByMinScore(req.params.exam, +req.params.minScore);
+    res.json(students);
 }
