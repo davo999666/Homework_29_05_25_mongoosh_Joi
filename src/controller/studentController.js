@@ -21,7 +21,7 @@ export const findStudent = async (req, res) => {
     if(error){
         return res.status(400).json({error: error.details[0].message});
     }
-    const success = await service.findStudent(req.params.id);
+    const success = await service.findStudent(+req.params.id);
     res.json(success ? success : 409);
 }
 
