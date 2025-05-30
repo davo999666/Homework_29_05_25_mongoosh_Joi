@@ -20,6 +20,13 @@ const studentSchema = new mongoose.Schema({
             return ret;
         }
     },
+    toJSON:{
+        transform: (doc, ret) => {
+            ret.id = ret._id;
+            delete ret._id;
+            return ret;
+        }
+    }
 })
 
 const Student = mongoose.model("Student", studentSchema, 'college');
